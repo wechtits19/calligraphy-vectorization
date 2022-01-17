@@ -3,9 +3,12 @@
     by Philip J. Schneider
     "Graphics Gems", Academic Press, 1990
 
+    From https://github.com/volkerp/fitCurves
+
     Modified by Martin Wechtitsch to enable more precise settings for
      - minimum reparameterization iterations before splitting
      - split error threshold
+     as well as a flat tangent for the start/end points of loops, so they join continuously.
 """
 from __future__ import print_function
 from numpy import *
@@ -14,9 +17,15 @@ import bezier
 
 # Fit one (ore more) Bezier curves to a set of points
 
-def fitCurve(points, maxError, splitError, minIterationsBeforeSplit = 0):
-    leftTangent = normalize(points[1] - points[0])
-    rightTangent = normalize(points[-2] - points[-1])
+def fitCurve(points, startsWithCorner, maxError, splitError, minIterationsBeforeSplit = 0):
+    # If the points represent a loop, ensure a continuous joint
+    if not startsWithCorner:
+        # Tangents are set flat to fit the character of the script (start point is the lowest point of the contour)
+        leftTangent = array([0, -1])
+        rightTangent = array([0, 1])
+    else:
+        leftTangent = normalize(points[1] - points[0])
+        rightTangent = normalize(points[-2] - points[-1])
     return fitCubic(points, leftTangent, rightTangent, maxError, splitError, minIterationsBeforeSplit)
 
 
@@ -37,7 +46,7 @@ def fitCubic(points, leftTangent, rightTangent, error, splitError, minIterations
 
     # If error not too large, try some reparameterization and iteration
     for i in range(20):
-        # Conditions has been modified to support added additional parameters
+        # Condition has been modified to support added additional parameters
         if maxError < splitError or i < minIterationsBeforeSplit:
             uPrime = reparameterize(bezCurve, points, u)
             bezCurve = generateBezier(points, uPrime, leftTangent, rightTangent)
