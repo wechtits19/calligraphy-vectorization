@@ -2,6 +2,10 @@
     Algorithm for Automatically Fitting Digitized Curves
     by Philip J. Schneider
     "Graphics Gems", Academic Press, 1990
+
+    Modified by Martin Wechtitsch to enable more precise settings for
+     - minimum reparameterization iterations before splitting
+     - split error threshold
 """
 from __future__ import print_function
 from numpy import *
@@ -10,13 +14,13 @@ import bezier
 
 # Fit one (ore more) Bezier curves to a set of points
 
-def fitCurve(points, maxError):
+def fitCurve(points, maxError, splitError, minIterationsBeforeSplit = 0):
     leftTangent = normalize(points[1] - points[0])
     rightTangent = normalize(points[-2] - points[-1])
-    return fitCubic(points, leftTangent, rightTangent, maxError)
+    return fitCubic(points, leftTangent, rightTangent, maxError, splitError, minIterationsBeforeSplit)
 
 
-def fitCubic(points, leftTangent, rightTangent, error):
+def fitCubic(points, leftTangent, rightTangent, error, splitError, minIterationsBeforeSplit):
     # Use heuristic if region only has two points in it
     if (len(points) == 2):
         dist = linalg.norm(points[0] - points[1]) / 3.0
@@ -32,8 +36,9 @@ def fitCubic(points, leftTangent, rightTangent, error):
         return [bezCurve]
 
     # If error not too large, try some reparameterization and iteration
-    if maxError < error**2:
-        for i in range(20):
+    for i in range(20):
+        # Conditions has been modified to support added additional parameters
+        if maxError < splitError or i < minIterationsBeforeSplit:
             uPrime = reparameterize(bezCurve, points, u)
             bezCurve = generateBezier(points, uPrime, leftTangent, rightTangent)
             maxError, splitPoint = computeMaxError(points, bezCurve, uPrime)
@@ -44,8 +49,8 @@ def fitCubic(points, leftTangent, rightTangent, error):
     # Fitting failed -- split at max error point and fit recursively
     beziers = []
     centerTangent = normalize(points[splitPoint-1] - points[splitPoint+1])
-    beziers += fitCubic(points[:splitPoint+1], leftTangent, centerTangent, error)
-    beziers += fitCubic(points[splitPoint:], -centerTangent, rightTangent, error)
+    beziers += fitCubic(points[:splitPoint+1], leftTangent, centerTangent, error, splitError, minIterationsBeforeSplit)
+    beziers += fitCubic(points[splitPoint:], -centerTangent, rightTangent, error, splitError, minIterationsBeforeSplit)
 
     return beziers
 
