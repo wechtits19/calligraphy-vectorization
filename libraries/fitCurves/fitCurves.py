@@ -12,7 +12,7 @@
 """
 from __future__ import print_function
 from numpy import *
-import bezier
+from libraries.fitCurves import bezier
 
 
 # Fit one (ore more) Bezier curves to a set of points
