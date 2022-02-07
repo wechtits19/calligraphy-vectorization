@@ -17,3 +17,9 @@ def qprimeprime(ctrlPoly, t):
     return 6*(1.0-t) * (ctrlPoly[2]-2*ctrlPoly[1]+ctrlPoly[0]) + 6*(t) * (ctrlPoly[3]-2*ctrlPoly[2]+ctrlPoly[1])
 
 
+# Returns curvature of curve at t
+# https://observablehq.com/@dhotson/drawing-better-looking-curves
+def curvature(ctrlPoly, t):
+    d = qprime(ctrlPoly, t)
+    dd = qprimeprime(ctrlPoly, t)
+    return (d[0] * dd[1] - d[1] * dd[0]) / (d[0] ** 2 + d[1] ** 2) ** (3 / 2)
