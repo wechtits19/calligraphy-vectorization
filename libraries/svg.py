@@ -7,6 +7,7 @@ The given functions need to be used in order:
  3. save_file
 """
 
+
 def create_file(filename, width, height):
     """
     Create a SVG file of specified width, height.
@@ -18,11 +19,13 @@ def create_file(filename, width, height):
     f.write('<defs/>\n')
     return f
 
+
 def add_path_element(file, path_string):
     """
     Add a path element to a previously created SVG file.
     """
     file.write(f'<path d="{path_string}"/>')
+
 
 def save_file(file):
     """

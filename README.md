@@ -7,6 +7,6 @@ Calligraphy vectorization project for my BAC2
 - https://matplotlib.org/stable/api/
 - https://numpy.org/doc/1.22/reference/
 - https://github.com/volkerp/fitCurves
-- https://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
+- https://github.com/scipy/scipy-cookbook/blob/main/ipython/SignalSmooth.ipynb
 - https://appdividend.com/2021/01/18/numpy-linalg-lstsq-function-in-python/
 - https://observablehq.com/@dhotson/drawing-better-looking-curves
