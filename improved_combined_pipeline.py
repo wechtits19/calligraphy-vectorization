@@ -18,7 +18,7 @@ if __name__ == '__main__':
     import os
 
     if not os.path.exists(f'{folder}/{output_folder}'):
-        os.makedirs(f'{folder}/{output_folder}]')
+        os.makedirs(f'{folder}/{output_folder}')
 
     ##############################
 
